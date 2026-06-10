@@ -29,10 +29,10 @@ export default function AdminPanelTab() {
         }
       });
       
-      const cData = usersList.map(u => ({
+      const cData = usersList.map((u: any) => ({
         name: u.displayName || u.email?.split('@')[0] || "Unknown",
         logs: logsByUserId[u.id] || 0
-      })).sort((a, b) => b.logs - a.logs);
+      })).sort((a: any, b: any) => b.logs - a.logs);
       
       setChartData(cData);
     } catch (err) {

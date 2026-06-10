@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* -------------------------------------------------------------------------- */
+/* PRINT STYLESHEET PROFILE FOR PROFESSIONAL PDF & HARD COPY REPORTS        */
+/* -------------------------------------------------------------------------- */
+@media print {
+  /* 1. Global Reset to Force Light Grayscale Printing (Prevents dark-mode ink wastage) */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+  }
+
+  html, 
+  body {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    width: 210mm !important; /* Forces A4 Standard width */
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #root {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  /* 2. Hide Non-Printable Elements */
+  aside,
+  nav,
+  header,
+  footer,
+  button,
+  input,
+  select,
+  textarea,
+  iframe,
+  [role="dialog"],
+  [role="alert"],
+  .print\:hidden,
+  .no-print,
+  .action-bar,
+  .floating-button,
+  .sidebar-trigger,
+  .quick-filters,
+  .tab-nav,
+  #file-uploader,
+  .drag-drop-zone,
+  .camera-box,
+  .paper-actions-toolbar,
+  .toast,
+  .notification {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  /* 3. Main Workspace Ingress Page Adjustment */
+  main {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    float: none !important;
+    position: static !important;
+  }
+
+  /* 4. Styled Official Document Container (#printable-area) */
+  #printable-area {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 15mm 15mm !important; /* Standard official letter margin */
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    page-break-after: always;
+  }
+
+  /* 5. Typography Formatting & Spacing Presets */
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+    font-weight: bold !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    margin-top: 1.5em !important;
+    margin-bottom: 0.5em !important;
+  }
+
+  h1 {
+    font-size: 20pt !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 1.2em !important;
+  }
+
+  h2 {
+    font-size: 15pt !important;
+    border-b: 1px solid #000000 !important;
+    padding-bottom: 3px !important;
+  }
+
+  h3 {
+    font-size: 12pt !important;
+  }
+
+  p, li, blockquote, pre {
+    font-size: 11pt !important;
+    margin-bottom: 1em !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  p {
+    page-break-inside: avoid !important;
+  }
+
+  blockquote {
+    border-left: 3px solid #333333 !important;
+    padding-left: 10px !important;
+    margin: 1.5em 0 !important;
+    font-style: italic !important;
+  }
+
+  /* Lists formatting */
+  ul, ol {
+    padding-left: 20px !important;
+    margin-bottom: 1em !important;
+  }
+
+  li {
+    margin-bottom: 0.4em !important;
+  }
+
+  /* 6. Precision Page Breaks Controlling */
+  .page-break-before {
+    page-break-before: always !important;
+  }
+
+  .page-break-after {
+    page-break-after: always !important;
+  }
+
+  .no-page-break-inside {
+    page-break-inside: avoid !important;
+  }
+
+  /* 7. Image and Media Assets Scaling for Print Outputs */
+  img {
+    max-width: 100mm !important; /* Shrink images to a balanced, clean scale */
+    max-height: 80mm !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 10px auto !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 4px !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* 8. Table Visual Formatting (For database log rows / dashboard stats prints) */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 1.5em !important;
+    page-break-inside: auto !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tfoot {
+    display: table-footer-group !important;
+  }
+
+  th, td {
+    border: 1.5px solid #000000 !important;
+    padding: 6px 8px !important;
+    font-size: 9pt !important;
+    text-align: left !important;
+  }
+
+  th {
+    background-color: #f2f2f2 !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 9. Specialized Decorative Document elements */
+  /* Keep Vietnamese Official Seal/Credentials clean */
+  .border-b.border-slate-100 {
+    border-color: #000000 !important;
+  }
+
+  /* Mini Gallery indicator styling under table entries, if they print */
+  .relative.w-8.h-8 {
+    width: auto !important;
+    height: auto !important;
+    border: none !important;
+  }
+
+  /* Simple fallback link decoration */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 80% !important;
+    color: #555555 !important;
+  }
+
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "" !important; /* Hide internal anchors and JS triggers path */
+  }
+
+  /* 10. Recharts & Dashboard Printing Optimization */
+  .recharts-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Exclude charts from blanket background and color resets to keep data color-coded */
+  .recharts-wrapper *,
+  svg.recharts-surface,
+  svg.recharts-surface * {
+    background: transparent !important;
+    color: initial !important;
+    fill-opacity: initial !important;
+    stroke-opacity: initial !important;
+  }
+
+  /* Make chart text tick labels and legends extremely sharp in print */
+  .recharts-text,
+  .recharts-label,
+  .recharts-legend-item-text {
+    fill: #111827 !important;
+    color: #111827 !important;
+    font-size: 8pt !important;
+    font-weight: 600 !important;
+  }
+
+  /* Target chart parent containers to scale nicely */
+  .print-chart-container {
+    height: 220px !important;
+    width: 100% !important;
+  }
+  
+  .print-kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .print-chart-grid-2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  .print-col-span-12 {
+    grid-column: span 12 / span 12 !important;
+  }
+}
+

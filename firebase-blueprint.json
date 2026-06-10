@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role management",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "User avatar URL"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "admin"],
+          "description": "User role"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["email", "role", "createdAt"]
+    },
+    "WorkLog": {
+      "title": "WorkLog",
+      "description": "A single piece of work logged by a user",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner of the work log"
+        },
+        "date": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "dueDate": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "plannedProgress": {
+          "type": "string"
+        },
+        "resultText": {
+          "type": "string"
+        },
+        "nextPlan": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId",
+        "date",
+        "category",
+        "priority",
+        "status",
+        "dueDate",
+        "content",
+        "plannedProgress",
+        "resultText",
+        "nextPlan",
+        "notes",
+        "attachments",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Store users with RBAC. Admins can manage."
+    },
+    "worklogs/{worklogId}": {
+      "schema": {
+        "$ref": "#/entities/WorkLog"
+      },
+      "description": "Store all daily tasks. Users read/write their own, admins see all."
+    }
+  }
+}

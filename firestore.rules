@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      // NOTE: Using unverified email checking as popup login sets `email_verified: false` sometimes locally in some emulators/IdP, but usually true. We'll enforce request.auth != null first, and verified strictly if production.
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrappedAdmin() {
+      return request.auth != null && request.auth.token.email == 'atkdinhhoa.vn@gmail.com';
+    }
+
+    function isAdmin() {
+       return isBootstrappedAdmin() || (isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    match /users/{userId} {
+      function isValidUser(data) {
+        return data.keys().hasAll(['email', 'role', 'createdAt']) &&
+               data.email is string && data.email.size() <= 200 &&
+               data.role is string && (data.role == 'user' || data.role == 'admin') &&
+               (data.get('displayName', '') is string) &&
+               (data.get('avatar', '') is string) &&
+               data.createdAt is number;
+      }
+
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin(); // only admins can list all users
+
+      allow create: if isSignedIn() && isValidId(userId) && request.auth.uid == userId &&
+                    isValidUser(incoming()) &&
+                    (incoming().role == 'user' || isBootstrappedAdmin());
+
+      allow update: if isSignedIn() && isValidId(userId) &&
+                    isValidUser(incoming()) &&
+                    (
+                      isAdmin() ||
+                      (request.auth.uid == userId && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'avatar']) && incoming().role == existing().role && incoming().createdAt == existing().createdAt)
+                    );
+      
+      allow delete: if isAdmin();
+    }
+
+    match /worklogs/{worklogId} {
+       function isValidWorkLog(data) {
+         return data.keys().hasAll(['userId', 'date', 'category', 'priority', 'status', 'dueDate', 'content', 'plannedProgress', 'resultText', 'nextPlan', 'notes', 'attachments', 'createdAt', 'updatedAt']) &&
+            data.userId is string && data.userId.size() <= 128 &&
+            data.date is string && data.date.size() <= 30 &&
+            data.category is string && data.category.size() <= 100 &&
+            data.priority is string && data.priority.size() <= 50 &&
+            data.status is string && data.status.size() <= 50 &&
+            data.dueDate is string && data.dueDate.size() <= 30 &&
+            data.content is string && data.content.size() <= 5000 &&
+            data.plannedProgress is string && data.plannedProgress.size() <= 5000 &&
+            data.resultText is string && data.resultText.size() <= 5000 &&
+            data.nextPlan is string && data.nextPlan.size() <= 5000 &&
+            data.notes is string && data.notes.size() <= 5000 &&
+            data.attachments is list && data.attachments.size() <= 50 &&
+            data.createdAt is string && data.createdAt.size() <= 50 &&
+            data.updatedAt is string && data.updatedAt.size() <= 50;
+       }
+
+       allow get: if isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+       allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+       allow create: if isSignedIn() && isValidId(worklogId) &&
+                     isValidWorkLog(incoming()) &&
+                     (incoming().userId == request.auth.uid || isAdmin()) &&
+                     exists(/databases/$(database)/documents/users/$(incoming().userId));
+
+       allow update: if isSignedIn() && isValidId(worklogId) &&
+                     isValidWorkLog(incoming()) &&
+                     (
+                       isAdmin() ||
+                       (request.auth.uid == existing().userId && incoming().userId == existing().userId && incoming().createdAt == existing().createdAt)
+                     );
+
+       allow delete: if isSignedIn() && (request.auth.uid == existing().userId || isAdmin());
+    }
+  }
+}

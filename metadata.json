@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Nhật ký công việc và Báo cáo",
+  "description": "Hệ thống ghi nhận nhật ký công việc thông minh, quản lý tiến độ, lịch trực quan, báo cáo tự động và thống kê hiệu quả công tác.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
